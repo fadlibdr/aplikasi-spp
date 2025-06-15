@@ -6,3 +6,4 @@
 /storage/framework/*
 /storage/logs/*
 /bootstrap/cache/*.php
+/.phpunit.result.cache
