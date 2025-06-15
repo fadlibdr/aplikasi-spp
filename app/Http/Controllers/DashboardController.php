@@ -51,6 +51,7 @@ class DashboardController extends Controller
                 },
             ])->get();
 
+
         return view('dashboard.admin', compact(
             'activeStudents',
             'paymentsThisMonth',
@@ -58,6 +59,8 @@ class DashboardController extends Controller
             'totalReceived',
             'totalPending',
             'studentsStatus'
+
+
         ));
     }
 

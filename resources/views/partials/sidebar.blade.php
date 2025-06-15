@@ -17,14 +17,6 @@
 
     <!-- Divider -->
     <hr class="sidebar-divider my-0">
-    @role('admin')
-    <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="fas fa-users-cog"></i>
-            <span>User Management</span>
-        </a>
-    </li>
-    @endrole
 
     @can('view pembayaran')
         <li class="nav-item">
@@ -68,7 +60,7 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Manajemen Kelas</h6>
-                <a class="collapse-item" href="{{ route(name: 'tahun-ajaran.index') }}">Tahun Ajaran</a>
+                <a class="collapse-item" href="{{ route('tahun-ajaran.index') }}">Tahun Ajaran</a>
                 <a class="collapse-item" href="{{ route('kelas.index') }}">Kelas</a>
             </div>
         </div>
@@ -85,7 +77,7 @@
             data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Data Siswa</h6>
-                <a class="collapse-item" href="{{ route(name: 'siswa.index') }}">Biodata Siswa</a>
+                <a class="collapse-item" href="{{ route('siswa.index') }}">Biodata Siswa</a>
             </div>
         </div>
     </li>
@@ -100,14 +92,14 @@
         <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Data Siswa</h6>
-                <a class="collapse-item" href="{{ route(name: 'jenis.index') }}">Jenis Iuran</a>
-                <a class="collapse-item" href="{{ route(name: 'iuran.index') }}">Iuran</a>
-                <a class="collapse-item" href="{{ route(name: 'keuangan.index') }}">Keuangan</a>
-                <a class="collapse-item" href="{{ route(name: 'riwayat.index') }}">Riwayat Pembayaran</a>
-                <a class="collapse-item" href="{{ route(name: 'cek-pembayaran.index') }}">Cek Pembayaran</a>
-                <a class="collapse-item" href="{{ route(name: 'jurnal-umum.index') }}">Jurnal Umum</a>
-                <a class="collapse-item" href="{{ route(name: 'users.index') }}">User Management</a>
-                <a class="collapse-item" href="{{ route(name: 'settings.index') }}">Application Settings</a>
+                <a class="collapse-item" href="{{ route('jenis.index') }}">Jenis Iuran</a>
+                <a class="collapse-item" href="{{ route('iuran.index') }}">Iuran</a>
+                <a class="collapse-item" href="{{ route('keuangan.index') }}">Keuangan</a>
+                <a class="collapse-item" href="{{ route('riwayat.index') }}">Riwayat Pembayaran</a>
+                <a class="collapse-item" href="{{ route('cek-pembayaran.index') }}">Cek Pembayaran</a>
+                <a class="collapse-item" href="{{ route('jurnal-umum.index') }}">Jurnal Umum</a>
+                <a class="collapse-item" href="{{ route('users.index') }}">User Management</a>
+                <a class="collapse-item" href="{{ route('settings.index') }}">Application Settings</a>
 
 
             </div>
@@ -132,14 +124,20 @@
                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Settings</h6>
-                    <a class="collapse-item" href="{{ route(name: 'users.index') }}">User Management</a>
-                    <a class="collapse-item" href="{{ route(name: 'settings.index') }}">Application Settings</a>
-
-
-
+                    <a class="collapse-item" href="{{ route('users.index') }}">User Management</a>
+                    <a class="collapse-item" href="{{ route('settings.index') }}">Application Settings</a>
                 </div>
             </div>
     </li>
+
+    @role('admin')
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('users.index') }}">
+            <i class="fas fa-users-cog"></i>
+            <span>User Management</span>
+        </a>
+    </li>
+    @endrole
 
     <!-- Divider -->
     <hr class="sidebar-divider">

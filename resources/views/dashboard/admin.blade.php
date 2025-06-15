@@ -78,3 +78,27 @@
 @endpush
 
 @endsection
+
+@push('scripts')
+<script src="{{ asset('vendor/sb-admin-2/vendor/chart.js/Chart.min.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    new Chart(document.getElementById('paymentStatusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Diterima', 'Pending'],
+            datasets: [{
+                data: [{{ $totalReceived }}, {{ $totalPending }}],
+                backgroundColor: ['#1cc88a', '#f6c23e'],
+                hoverBackgroundColor: ['#17a673', '#f4b619'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+});
+</script>
+@endpush
