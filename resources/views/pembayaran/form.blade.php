@@ -2,17 +2,17 @@
 
 @section('content')
 
-<div class="container">
-  <h3>Daftar Iuran Pending</h3>
+  <div class="container">
+    <h3>Daftar Iuran Pending</h3>
 
-  <table class="table table-striped">
+    <table class="table table-striped">
     <thead>
       <tr>
-        <th>No</th>
-        <th>Siswa</th>
-        <th>Jenis Pembayaran</th>
-        <th>Nominal</th>
-        <th>Aksi</th>
+      <th>No</th>
+      <th>Siswa</th>
+      <th>Jenis Pembayaran</th>
+      <th>Nominal</th>
+      <th>Aksi</th>
       </tr>
     </thead>
     <tbody>
@@ -23,9 +23,9 @@
       <td>{{ $i->jenisPembayaran->nama }}</td>
       <td>Rp {{ number_format($i->jenisPembayaran->nominal, 0, ',', '.') }}</td>
       <td>
-        <a href="{{ route('pembayaran.bayar', $i->id) }}" class="btn btn-sm btn-primary">
-        Bayar
-        </a>
+      <a href="{{ route('pembayaran.bayar', $i->id) }}" class="btn btn-sm btn-primary">
+      Bayar
+      </a>
       </td>
       </tr>
     @empty
@@ -34,7 +34,7 @@
       </tr>
     @endforelse
     </tbody>
-  </table>
-</div>
+    </table>
+  </div>
 
-@endsections
+@endsection
