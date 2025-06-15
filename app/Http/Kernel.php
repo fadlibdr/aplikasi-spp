@@ -54,6 +54,5 @@ class Kernel extends HttpKernel
         // Spatie Permission
         'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
-        'mustchange' => \App\Http\Middleware\EnsurePasswordChanged::class,
     ];
 }
