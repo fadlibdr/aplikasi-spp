@@ -15,6 +15,7 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
+                    <th><input type="checkbox" id="select-all"></th>
                     <th>#</th>
                     <th>Jenis</th>
                     <th>Nominal</th>
@@ -25,6 +26,7 @@
             <tbody>
                 @foreach ($iuran as $index => $tagihan)
                     <tr>
+                        <td><input type="checkbox" class="iuran-checkbox" name="iuran_ids[]" value="{{ $tagihan->id }}"></td>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $tagihan->jenisPembayaran->nama }}</td>
                         <td>Rp {{ number_format($tagihan->jenisPembayaran->nominal, 0, ',', '.') }}</td>
@@ -35,30 +37,33 @@
             </tbody>
         </table>
 
-        <a href="#" class="btn btn-success">Bayar Sekarang (Midtrans)</a> {{-- Tombol dummy --}}
+        <button id="pay-button" class="btn btn-success">Bayar Terpilih</button>
         <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
         <script type="text/javascript">
-    document.getElementById('pay-button').addEventListener('click', function (e) {
-        e.preventDefault();
-        window.snap.pay('{{ $snapToken }}', {
-            onSuccess: function(result){
-                alert("Pembayaran berhasil.");
-                console.log(result);
-            },
-            onPending: function(result){
-                alert("Menunggu pembayaran.");
-                console.log(result);
-            },
-            onError: function(result){
-                alert("Terjadi kesalahan.");
-                console.log(result);
-            },
-            onClose: function(){
-                alert("Pembayaran dibatalkan.");
-            }
-        });
-    });
-</script
+            document.getElementById('select-all').addEventListener('change', function () {
+                document.querySelectorAll('.iuran-checkbox').forEach(cb => cb.checked = this.checked);
+            });
+            document.getElementById('pay-button').addEventListener('click', function (e) {
+                e.preventDefault();
+                window.snap.pay('{{ $snapToken }}', {
+                    onSuccess: function(result){
+                        alert("Pembayaran berhasil.");
+                        console.log(result);
+                    },
+                    onPending: function(result){
+                        alert("Menunggu pembayaran.");
+                        console.log(result);
+                    },
+                    onError: function(result){
+                        alert("Terjadi kesalahan.");
+                        console.log(result);
+                    },
+                    onClose: function(){
+                        alert("Pembayaran dibatalkan.");
+                    }
+                });
+            });
+        </script>
     @endif
 </div>
 @endsection
