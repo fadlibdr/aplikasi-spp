@@ -5,6 +5,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Kelas;
+use App\Models\Iuran;
 
 class Siswa extends Model
 {
@@ -36,5 +37,13 @@ class Siswa extends Model
     public function kelas()
     {
         return $this->belongsTo(Kelas::class, 'kelas_id');
+    }
+
+    /**
+     * Relasi ke Iuran (hasMany)
+     */
+    public function iuran()
+    {
+        return $this->hasMany(Iuran::class, 'siswa_id');
     }
 }
