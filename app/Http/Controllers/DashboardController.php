@@ -34,10 +34,32 @@ class DashboardController extends Controller
             ->distinct('siswa_id')
             ->count();
 
+        // Total nominal pembayaran yang sudah diterima
+        $totalReceived = Pembayaran::where('status', 'settlement')->sum('jumlah');
+
+        // Total nominal pembayaran yang masih pending
+        $totalPending = Pembayaran::where('status', 'pending')->sum('jumlah');
+
+        // Status pembayaran per siswa
+        $studentStatuses = Siswa::with('kelas')->get()->map(function ($s) {
+            $hasPending = Iuran::where('siswa_id', $s->id)
+                ->where('status', 'pending')
+                ->exists();
+
+            return [
+                'nama' => $s->nama_depan . ' ' . $s->nama_belakang,
+                'kelas' => optional($s->kelas)->nama,
+                'status' => $hasPending ? 'Belum Lunas' : 'Lunas',
+            ];
+        });
+
         return view('dashboard.admin', compact(
             'activeStudents',
             'paymentsThisMonth',
-            'pendingStudents'
+            'pendingStudents',
+            'totalReceived',
+            'totalPending',
+            'studentStatuses'
         ));
     }
 

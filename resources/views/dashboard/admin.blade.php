@@ -30,5 +30,51 @@
       </div>
     </div>
   </div>
+
+  <script src="{{ asset('vendor/sb-admin-2/vendor/chart.js/Chart.min.js') }}"></script>
+
+  <canvas id="paymentChart"></canvas>
+
+  <h5 class="mt-4">Status Pembayaran Siswa</h5>
+  <table class="table table-striped" id="studentStatusTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nama</th>
+        <th>Kelas</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach($studentStatuses as $idx => $s)
+      <tr>
+        <td>{{ $idx + 1 }}</td>
+        <td>{{ $s['nama'] }}</td>
+        <td>{{ $s['kelas'] }}</td>
+        <td>
+          <span class="badge badge-{{ $s['status'] == 'Lunas' ? 'success' : 'warning' }}">
+            {{ $s['status'] }}
+          </span>
+        </td>
+      </tr>
+      @endforeach
+    </tbody>
+  </table>
 </div>
+@push('scripts')
+<script>
+    const ctx = document.getElementById('paymentChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Diterima', 'Pending'],
+            datasets: [{
+                data: [{{ $totalReceived }}, {{ $totalPending }}],
+                backgroundColor: ['#1cc88a', '#f6c23e'],
+            }]
+        }
+    });
+</script>
+@endpush
+
 @endsection
