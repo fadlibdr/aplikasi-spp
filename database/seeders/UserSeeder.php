@@ -35,7 +35,7 @@ class UserSeeder extends Seeder
         // Siswa
         $siswa = User::create([
             'name' => 'Siswa Aktif',
-            'email' => 'siswa@example.com',
+            'email' => 'siswa1@example.com',
             'password' => Hash::make('admin123'),
         ]);
         $siswa->assignRole($siswaRole);
