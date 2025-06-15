@@ -78,7 +78,7 @@ class PembayaranController extends Controller
             ],
         ];
 
-        $snapToken = \Midtrans\Snap::getSnapToken($params);
+        $snapToken = Snap::getSnapToken($params);
 
         return view('pembayaran.bayar', compact('iuran', 'snapToken'));
     }
