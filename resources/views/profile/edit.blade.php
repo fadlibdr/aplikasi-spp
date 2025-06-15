@@ -6,6 +6,11 @@
     </x-slot>
 
     <div class="py-12">
+        @if (session('status') === 'must-change-password')
+            <div class="mb-4 p-4 bg-red-100 text-red-800 rounded">
+                {{ __('Please change your password before continuing.') }}
+            </div>
+        @endif
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <div class="max-w-xl">

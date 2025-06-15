@@ -22,6 +22,13 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
+        $user = Auth::user();
+        if ($user->must_change_password) {
+            return redirect()
+                ->route('profile.edit')
+                ->with('status', 'must-change-password');
+        }
+
         // Redirect sesuai role via RouteServiceProvider::home()
         return redirect()->intended(RouteServiceProvider::home());
     }
