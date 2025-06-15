@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Siswa;
 use App\Models\Kelas;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Imports\SiswaImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class SiswaController extends Controller
 {
@@ -64,6 +67,16 @@ class SiswaController extends Controller
             $v['foto'] = $path;
         }
 
+        $birth = isset($v['tanggal_lahir']) ? Carbon::parse($v['tanggal_lahir'])->format('dmy') : '';
+        $user = User::create([
+            'name' => $v['nama_depan'].' '.$v['nama_belakang'],
+            'email' => $v['email'],
+            'password' => Hash::make($v['nama_belakang'].$birth),
+        ]);
+        $user->assignRole('siswa');
+
+        $v['user_id'] = $user->id;
+
         Siswa::create($v);
 
         return redirect()->route('siswa.index')
@@ -111,6 +124,13 @@ class SiswaController extends Controller
         }
 
         $siswa->update($v);
+
+        if ($siswa->user) {
+            $siswa->user->update([
+                'name' => $v['nama_depan'].' '.$v['nama_belakang'],
+                'email' => $v['email'],
+            ]);
+        }
 
         return redirect()->route('siswa.index')
                          ->with('success','Data siswa berhasil diperbarui.');
