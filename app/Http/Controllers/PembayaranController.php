@@ -23,7 +23,8 @@ class PembayaranController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['auth', 'role:admin|operator']);
+        $this->middleware(['auth', 'role:admin|operator'])
+            ->except('callback');
     }
 
     /**
