@@ -12,7 +12,7 @@
         @csrf
         <div class="form-group mb-3">
             <label for="nisn">Masukkan NISN:</label>
-            <input type="text" name="nisn" class="form-control" placeholder="Contoh: 1234567890" required>
+            <input type="text" name="nisn" class="form-control" placeholder="Contoh: 1234567890" required value="{{ $nisn }}" @if($nisn) readonly @endif>
         </div>
         <button type="submit" class="btn btn-primary">Cek Tagihan</button>
     </form>
