@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Siswa;
 use App\Models\Kelas;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class SiswaSeeder extends Seeder
 {
@@ -15,13 +17,22 @@ class SiswaSeeder extends Seeder
         $kelas = Kelas::all();
         // Buat 3 siswa dummy
         foreach (range(1, end: 3) as $i) {
+            $birth = now()->subYears(15);
+            $user = User::create([
+                'name' => 'Siswa' . $i . ' Test',
+                'email' => "siswa{$i}@example.com",
+                'password' => Hash::make('test123'),
+                'must_change_password' => true,
+            ]);
+            $user->assignRole('siswa');
+
             Siswa::create([
                 'nis' => 'NIS' . str_pad($i, 3, '0', STR_PAD_LEFT),
                 'nisn' => 'NISN' . str_pad($i, 3, '0', STR_PAD_LEFT),
                 'nama_depan' => 'Siswa' . $i,
                 'nama_belakang' => 'Test',
                 'email' => "siswa{$i}@example.com",
-                'tanggal_lahir' => now()->subYears(15)->format('Y-m-d'),
+                'tanggal_lahir' => $birth->format('Y-m-d'),
                 'jenis_kelamin' => $i % 2 ? 'Laki-laki' : 'Perempuan',
                 'alamat' => 'Jl. Contoh No.' . $i,
                 'wali_murid' => 'Orangtua' . $i,
@@ -31,6 +42,7 @@ class SiswaSeeder extends Seeder
                 'status_awal_siswa' => 'baru',
                 'status_akhir_siswa' => 'aktif',
                 'kelas_id' => $kelas->random()->id,
+                'user_id' => $user->id,
             ]);
         }
     }
