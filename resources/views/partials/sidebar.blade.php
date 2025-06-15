@@ -17,14 +17,6 @@
 
     <!-- Divider -->
     <hr class="sidebar-divider my-0">
-    @role('admin')
-    <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="fas fa-users-cog"></i>
-            <span>User Management</span>
-        </a>
-    </li>
-    @endrole
 
     @can('view pembayaran')
         <li class="nav-item">
@@ -134,12 +126,18 @@
                     <h6 class="collapse-header">Settings</h6>
                     <a class="collapse-item" href="{{ route('users.index') }}">User Management</a>
                     <a class="collapse-item" href="{{ route('settings.index') }}">Application Settings</a>
-
-
-
                 </div>
             </div>
     </li>
+
+    @role('admin')
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('users.index') }}">
+            <i class="fas fa-users-cog"></i>
+            <span>User Management</span>
+        </a>
+    </li>
+    @endrole
 
     <!-- Divider -->
     <hr class="sidebar-divider">
