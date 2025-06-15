@@ -14,6 +14,7 @@ use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\JurnalUmumController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\ProfilSekolahController;
 use App\Http\Controllers\UserController;
 
 
@@ -24,6 +25,9 @@ use App\Http\Controllers\UserController;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::resource('profil', ProfilSekolahController::class);
 
 Route::post('midtrans/callback', [PembayaranController::class, 'callback'])
     ->name('midtrans.callback');
@@ -82,6 +86,7 @@ Route::middleware(['auth', 'role:admin|operator'])->group(function () {
     Route::get('jurnal-umum/cetak-pdf', [JurnalUmumController::class, 'exportPdf'])
         ->name('jurnal-umum.cetak-pdf');
 });
+
 
 
 

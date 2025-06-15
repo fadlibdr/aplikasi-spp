@@ -10,10 +10,11 @@ class RouteServiceProvider extends ServiceProvider
     public static function home()
     {
         if (auth()->check()) {
-            if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('operator')) {
+            if (auth()->user()->hasRole('admin')) {
                 return route('dashboard.admin');
-            }
-            if (auth()->user()->hasRole('siswa')) {
+            } elseif (auth()->user()->hasRole('operator')) {
+                return route('dashboard.admin');
+            } elseif (auth()->user()->hasRole('siswa')) {
                 return route('dashboard.student');
             }
         }

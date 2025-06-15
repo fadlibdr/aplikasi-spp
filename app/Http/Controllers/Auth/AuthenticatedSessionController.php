@@ -22,7 +22,7 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
-        // Redirect sesuai role via RouteServiceProvider::home()
+        // redirect ke home() yang akan nge-generate URL sesuai role
         return redirect()->intended(RouteServiceProvider::home());
     }
 
