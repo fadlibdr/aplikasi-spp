@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Siswa;
 use App\Models\Iuran;
+use Illuminate\Support\Facades\Auth;
 use Midtrans\Snap;
 use Midtrans\Config as MidtransConfig;
 
@@ -13,14 +14,25 @@ class CekPembayaranController extends Controller
 {
     public function index()
     {
-        return view('cek-pembayaran.index');
+        $nisn = null;
+        if (Auth::check() && Auth::user()->hasRole('siswa')) {
+            $nisn = Siswa::where('email', Auth::user()->email)->value('nisn');
+        }
+        return view('cek-pembayaran.index', compact('nisn'));
     }
 
     public function show(Request $request)
     {
         $request->validate(['nisn' => 'required']);
 
-        $siswa = Siswa::where('nisn', $request->nisn)->firstOrFail();
+        if (Auth::check() && Auth::user()->hasRole('siswa')) {
+            $siswa = Siswa::where('email', Auth::user()->email)->firstOrFail();
+            if ($request->nisn !== $siswa->nisn) {
+                return back()->withErrors('Anda hanya dapat mengecek pembayaran anda sendiri.');
+            }
+        } else {
+            $siswa = Siswa::where('nisn', $request->nisn)->firstOrFail();
+        }
         $iuran = Iuran::with('jenisPembayaran')
             ->where('siswa_id', $siswa->id)
             ->where('status', 'pending')
