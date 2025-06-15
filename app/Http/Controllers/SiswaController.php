@@ -9,6 +9,7 @@ use App\Imports\SiswaImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class SiswaController extends Controller
 {
@@ -46,7 +47,7 @@ class SiswaController extends Controller
             'nama_depan'         => 'required|string|max:50',
             'nama_belakang'      => 'required|string|max:50',
             'foto'               => 'nullable|image|max:2048',
-            'email'              => 'required|email|unique:siswa,email',
+            'email'              => 'required|email|unique:siswa,email|unique:users,email',
             'tanggal_lahir'      => 'nullable|date',
             'jenis_kelamin'      => 'nullable|in:Laki-laki,Perempuan',
             'alamat'             => 'nullable|string',
@@ -89,7 +90,12 @@ class SiswaController extends Controller
             'nama_depan'         => 'required|string|max:50',
             'nama_belakang'      => 'required|string|max:50',
             'foto'               => 'nullable|image|max:2048',
-            'email'              => "required|email|unique:siswa,email,{$siswa->id}",
+            'email'              => [
+                'required',
+                'email',
+                "unique:siswa,email,{$siswa->id}",
+                Rule::unique('users', 'email')->ignore($siswa->email, 'email'),
+            ],
             'tanggal_lahir'      => 'nullable|date',
             'jenis_kelamin'      => 'nullable|in:Laki-laki,Perempuan',
             'alamat'             => 'nullable|string',

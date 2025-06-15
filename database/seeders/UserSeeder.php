@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
             'name' => 'Admin Sekolah',
             'email' => 'admin@example.com',
             'password' => Hash::make('admin123'),
+            'must_change_password' => false,
         ]);
         $admin->assignRole($adminRole);
 
@@ -29,15 +30,8 @@ class UserSeeder extends Seeder
             'name' => 'Operator Sekolah',
             'email' => 'operator@example.com',
             'password' => Hash::make('admin123'),
+            'must_change_password' => false,
         ]);
         $operator->assignRole($operatorRole);
-
-        // Siswa
-        $siswa = User::create([
-            'name' => 'Siswa Aktif',
-            'email' => 'siswa1@example.com',
-            'password' => Hash::make('admin123'),
-        ]);
-        $siswa->assignRole($siswaRole);
     }
 }
