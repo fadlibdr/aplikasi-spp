@@ -42,7 +42,7 @@ class VerifyCsrfToken
      * @var array<int, string>
      */
     protected $except = [
-        'midtrans/callback',
+        'midtrans/*',
     ];
 
     /**
