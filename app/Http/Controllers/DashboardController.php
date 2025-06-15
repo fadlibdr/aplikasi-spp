@@ -34,10 +34,15 @@ class DashboardController extends Controller
             ->distinct('siswa_id')
             ->count();
 
+        $totalReceived = Pembayaran::where('status', 'settlement')->sum('jumlah');
+        $totalPending  = Pembayaran::where('status', 'pending')->sum('jumlah');
+
         return view('dashboard.admin', compact(
             'activeStudents',
             'paymentsThisMonth',
-            'pendingStudents'
+            'pendingStudents',
+            'totalReceived',
+            'totalPending'
         ));
     }
 
