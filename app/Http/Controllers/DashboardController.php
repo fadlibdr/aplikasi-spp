@@ -37,12 +37,19 @@ class DashboardController extends Controller
         $totalReceived = Pembayaran::where('status', 'settlement')->sum('jumlah');
         $totalPending  = Pembayaran::where('status', 'pending')->sum('jumlah');
 
+        $studentPayments = Siswa::with('kelas')
+            ->withCount([
+                'iuran as pending_iuran_count' => fn($q) => $q->where('status', 'pending')
+            ])
+            ->get();
+
         return view('dashboard.admin', compact(
             'activeStudents',
             'paymentsThisMonth',
             'pendingStudents',
             'totalReceived',
-            'totalPending'
+            'totalPending',
+            'studentPayments'
         ));
     }
 

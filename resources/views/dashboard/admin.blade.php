@@ -32,8 +32,36 @@
   </div>
   <div class="card mt-4">
     <div class="card-body">
-      <canvas id="paymentStatusChart"></canvas>
+      <canvas id="paymentChart"></canvas>
     </div>
+  </div>
+
+  <div class="card shadow-sm mt-4">
+      <div class="card-body">
+          <h5 class="card-title">Status Pembayaran Siswa</h5>
+          <table class="table table-bordered">
+              <thead>
+                  <tr>
+                      <th>NIS</th>
+                      <th>Nama</th>
+                      <th>Status</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  @foreach($studentPayments as $s)
+                  <tr>
+                      <td>{{ $s->nis }}</td>
+                      <td>{{ $s->nama_depan }} {{ $s->nama_belakang }}</td>
+                      <td>
+                          <span class="badge badge-{{ $s->pending_iuran_count ? 'warning' : 'success' }}">
+                              {{ $s->pending_iuran_count ? 'Belum Lunas' : 'Lunas' }}
+                          </span>
+                      </td>
+                  </tr>
+                  @endforeach
+              </tbody>
+          </table>
+      </div>
   </div>
 </div>
 @endsection
@@ -42,7 +70,7 @@
 <script src="{{ asset('vendor/sb-admin-2/vendor/chart.js/Chart.min.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    new Chart(document.getElementById('paymentStatusChart'), {
+    new Chart(document.getElementById('paymentChart'), {
         type: 'doughnut',
         data: {
             labels: ['Diterima', 'Pending'],
