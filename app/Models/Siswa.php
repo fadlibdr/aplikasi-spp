@@ -37,4 +37,12 @@ class Siswa extends Model
     {
         return $this->belongsTo(Kelas::class, 'kelas_id');
     }
+
+    /**
+     * Relasi ke Iuran (hasMany)
+     */
+    public function iuran()
+    {
+        return $this->hasMany(Iuran::class, 'siswa_id');
+    }
 }

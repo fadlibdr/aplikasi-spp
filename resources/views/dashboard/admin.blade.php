@@ -30,5 +30,51 @@
       </div>
     </div>
   </div>
+
+  <script src="{{ asset('vendor/sb-admin-2/vendor/chart.js/Chart.min.js') }}"></script>
+
+  <canvas id="paymentChart"></canvas>
+
+  <div class="card mt-4">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Status Pembayaran Siswa</h5>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Nama</th>
+            <th>Kelas</th>
+            <th>Lunas</th>
+            <th>Pending</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach($studentsStatus as $s)
+            <tr>
+              <td>{{ $s->nama_depan }} {{ $s->nama_belakang }}</td>
+              <td>{{ $s->kelas->nama }}</td>
+              <td>{{ $s->paid_count }}</td>
+              <td>{{ $s->pending_count }}</td>
+            </tr>
+          @endforeach
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
+@push('scripts')
+<script>
+    const ctx = document.getElementById('paymentChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Diterima', 'Pending'],
+            datasets: [{
+                data: [{{ $totalReceived }}, {{ $totalPending }}],
+                backgroundColor: ['#1cc88a', '#f6c23e'],
+            }]
+        }
+    });
+</script>
+@endpush
+
 @endsection
