@@ -9,12 +9,13 @@
         <div class="alert alert-success">Tidak ada tagihan tertunda.</div>
     @else
         <div class="mb-3">
-            <strong>Total Tagihan:</strong> Rp {{ number_format($totalTagihan, 0, ',', '.') }}
+            <strong>Total Tagihan:</strong> Rp <span id="total-amount">{{ number_format($totalTagihan, 0, ',', '.') }}</span>
         </div>
 
         <table class="table table-bordered">
             <thead>
                 <tr>
+                    <th><input type="checkbox" id="select-all"></th>
                     <th>#</th>
                     <th>Jenis</th>
                     <th>Nominal</th>
@@ -25,6 +26,7 @@
             <tbody>
                 @foreach ($iuran as $index => $tagihan)
                     <tr>
+                        <td><input type="checkbox" class="iuran-checkbox" data-nominal="{{ $tagihan->jenisPembayaran->nominal }}" value="{{ $tagihan->id }}"></td>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $tagihan->jenisPembayaran->nama }}</td>
                         <td>Rp {{ number_format($tagihan->jenisPembayaran->nominal, 0, ',', '.') }}</td>
@@ -35,30 +37,54 @@
             </tbody>
         </table>
 
-        <a href="#" class="btn btn-success">Bayar Sekarang (Midtrans)</a> {{-- Tombol dummy --}}
+        <button id="pay-button" class="btn btn-success">Bayar Terpilih</button>
         <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
         <script type="text/javascript">
-    document.getElementById('pay-button').addEventListener('click', function (e) {
-        e.preventDefault();
-        window.snap.pay('{{ $snapToken }}', {
-            onSuccess: function(result){
-                alert("Pembayaran berhasil.");
-                console.log(result);
-            },
-            onPending: function(result){
-                alert("Menunggu pembayaran.");
-                console.log(result);
-            },
-            onError: function(result){
-                alert("Terjadi kesalahan.");
-                console.log(result);
-            },
-            onClose: function(){
-                alert("Pembayaran dibatalkan.");
+            const checkboxes = document.querySelectorAll('.iuran-checkbox');
+            const totalEl = document.getElementById('total-amount');
+
+            function format(num) {
+                return new Intl.NumberFormat('id-ID').format(num);
             }
-        });
-    });
-</script
+
+            function updateTotal() {
+                let total = 0;
+                checkboxes.forEach(cb => { if (cb.checked) total += parseInt(cb.dataset.nominal); });
+                totalEl.textContent = format(total);
+            }
+
+            document.getElementById('select-all').addEventListener('change', function () {
+                checkboxes.forEach(cb => { cb.checked = this.checked; });
+                updateTotal();
+            });
+            checkboxes.forEach(cb => cb.addEventListener('change', updateTotal));
+            updateTotal();
+
+            document.getElementById('pay-button').addEventListener('click', function (e) {
+                e.preventDefault();
+                const ids = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+                if (ids.length === 0) {
+                    alert('Pilih tagihan terlebih dahulu.');
+                    return;
+                }
+                fetch('{{ route('cek-pembayaran.bayar') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ iuran_ids: ids })
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.token) {
+                        window.snap.pay(res.token);
+                    } else {
+                        alert(res.error || 'Terjadi kesalahan');
+                    }
+                });
+            });
+        </script>
     @endif
 </div>
 @endsection
