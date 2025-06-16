@@ -5,6 +5,9 @@ namespace App\Imports;
 use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Password;
+use App\Notifications\VerifyEmailAndSetPassword;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -16,10 +19,12 @@ class SiswaImport implements ToModel, WithHeadingRow
         $user = User::create([
             'name' => $row['nama_depan'].' '.$row['nama_belakang'],
             'email' => $row['email'],
-            'password' => Hash::make('test123'),
-            'must_change_password' => true,
+            'password' => Hash::make(Str::random(12)),
         ]);
         $user->assignRole('siswa');
+
+        $token = Password::broker()->createToken($user);
+        $user->notify(new VerifyEmailAndSetPassword($token));
 
         return new Siswa([
             'nis'                => $row['nis'],

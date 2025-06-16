@@ -29,28 +29,28 @@ Route::post('midtrans/callback', [PembayaranController::class, 'callback'])
     ->name('midtrans.callback');
 
 
-Route::middleware(['auth', 'must-change-password'])->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::group(['middleware' => ['auth', 'must-change-password', 'role:admin']], function () {
+Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::resource('tahun-ajaran', TahunAjaranController::class);
 });
 
-Route::group(['middleware' => ['auth', 'must-change-password', 'role:admin']], function () {
+Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::resource('kelas', KelasController::class);
 });
 
-Route::group(['middleware' => ['auth', 'must-change-password', 'role:admin']], function () {
+Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::resource('siswa', SiswaController::class);
     Route::post('siswa/import', [SiswaController::class, 'import'])
         ->name('siswa.import');
 });
 
 
-Route::group(['middleware' => ['auth', 'must-change-password', 'role:admin']], function () {
+Route::group(['middleware' => ['auth', 'role:admin']], function () {
     // Jenis Pembayaran
     Route::get('jenis-pembayaran', [Modul6Controller::class, 'indexJenis'])->name('jenis.index');
     Route::get('jenis-pembayaran/create', [Modul6Controller::class, 'createJenis'])->name('jenis.create');
@@ -69,7 +69,7 @@ Route::group(['middleware' => ['auth', 'must-change-password', 'role:admin']], f
 });
 
 
-Route::middleware(['auth', 'must-change-password', 'role:admin|operator'])->group(function () {
+Route::middleware(['auth', 'role:admin|operator'])->group(function () {
     Route::get('jurnal-umum', [JurnalUmumController::class, 'index'])
         ->name('jurnal-umum.index');
     Route::get('jurnal-umum/create', [JurnalUmumController::class, 'create'])
@@ -85,7 +85,7 @@ Route::middleware(['auth', 'must-change-password', 'role:admin|operator'])->grou
 
 
 
-Route::middleware(['auth', 'must-change-password', 'role:admin|operator'])->group(function () {
+Route::middleware(['auth', 'role:admin|operator'])->group(function () {
     // 1) Tampilkan daftar iuran pending
     Route::get('/pembayaran', [PembayaranController::class, 'form'])->name('pembayaran.index');
 
@@ -96,13 +96,13 @@ Route::middleware(['auth', 'must-change-password', 'role:admin|operator'])->grou
 
 
 // Admin-only dashboard
-Route::middleware(['auth', 'must-change-password', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'admin'])
         ->name('dashboard.admin');
 });
 
 // Siswa-only dashboard
-Route::middleware(['auth', 'must-change-password', 'role:siswa'])->group(function () {
+Route::middleware(['auth', 'role:siswa'])->group(function () {
     Route::get('/dashboard-siswa', [DashboardController::class, 'student'])
         ->name('dashboard.student');
 });
@@ -112,13 +112,13 @@ Route::get('/cek-pembayaran', [CekPembayaranController::class, 'index'])->name('
 Route::post('/cek-pembayaran', [CekPembayaranController::class, 'show'])->name('cek-pembayaran.show');
 
 
-Route::middleware(['auth', 'must-change-password'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/riwayat-transaksi', [RiwayatTransaksiController::class, 'index'])->name('riwayat.index');
     Route::get('/riwayat-transaksi/{id}', [RiwayatTransaksiController::class, 'show'])->name('riwayat.show');
 });
 
 
-Route::middleware(['auth', 'must-change-password', 'role:admin|operator'])->group(function () {
+Route::middleware(['auth', 'role:admin|operator'])->group(function () {
     Route::get('/keuangan', [KeuanganController::class, 'index'])->name('keuangan.index');
     Route::get('/keuangan/tambah', [KeuanganController::class, 'create'])->name('keuangan.create');
     Route::post('/keuangan', [KeuanganController::class, 'store'])->name('keuangan.store');
@@ -128,7 +128,7 @@ Route::get('/keuangan/export-excel', [KeuanganController::class, 'exportExcel'])
 Route::get('/keuangan/cetak-pdf', [KeuanganController::class, 'exportPdf'])->name('keuangan.export-pdf');
 
 
-Route::middleware(['auth', 'must-change-password', 'role:admin|operator'])->group(function () {
+Route::middleware(['auth', 'role:admin|operator'])->group(function () {
     Route::get('/laporan', [LaporanController::class, 'index'])
         ->name('laporan.index');
     Route::post('/laporan', [LaporanController::class, 'generate'])
@@ -140,7 +140,7 @@ Route::middleware(['auth', 'must-change-password', 'role:admin|operator'])->grou
 });
 
 
-Route::middleware(['auth', 'must-change-password', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
     // Tampilkan halaman settings
     Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
 
@@ -160,7 +160,7 @@ Route::middleware(['auth', 'must-change-password', 'role:admin'])->group(functio
     Route::post('settings/restore-upload', [SettingsController::class, 'restoreUpload'])->name('settings.restore.upload');
 });
 
-Route::middleware(['auth', 'must-change-password', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('users', UserController::class);
 });
 

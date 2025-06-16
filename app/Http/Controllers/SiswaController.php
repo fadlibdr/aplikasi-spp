@@ -11,6 +11,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use App\Notifications\VerifyEmailAndSetPassword;
 use Carbon\Carbon;
 
 class SiswaController extends Controller
@@ -70,10 +72,12 @@ class SiswaController extends Controller
         $user = User::create([
             'name' => $v['nama_depan'].' '.$v['nama_belakang'],
             'email' => $v['email'],
-            'password' => Hash::make('test123'),
-            'must_change_password' => true,
+            'password' => Hash::make(Str::random(12)),
         ]);
         $user->assignRole('siswa');
+
+        $token = Password::broker()->createToken($user);
+        $user->notify(new \App\Notifications\VerifyEmailAndSetPassword($token));
 
         $v['user_id'] = $user->id;
 

@@ -7,6 +7,7 @@ use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class SiswaSeeder extends Seeder
 {
@@ -21,8 +22,8 @@ class SiswaSeeder extends Seeder
             $user = User::create([
                 'name' => 'Siswa' . $i . ' Test',
                 'email' => "siswa{$i}@example.com",
-                'password' => Hash::make('test123'),
-                'must_change_password' => true,
+                'password' => Hash::make(Str::random(12)),
+                'email_verified_at' => now(),
             ]);
             $user->assignRole('siswa');
 
