@@ -19,8 +19,8 @@ class SiswaController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('permission:view siswa')->only('index');
-        $this->middleware('permission:create siswa')->only(['create','store','import']);
-        $this->middleware('permission:edit siswa')->only(['edit','update']);
+        $this->middleware('permission:create siswa')->only(['create', 'store', 'import']);
+        $this->middleware('permission:edit siswa')->only(['edit', 'update']);
         $this->middleware('permission:delete siswa')->only('destroy');
     }
 
@@ -34,44 +34,45 @@ class SiswaController extends Controller
     {
         $kelasList = Kelas::orderBy('nama')->get();
         return view('siswa.form', [
-            'mode'      => 'create',
-            'action'    => route('siswa.store'),
-            'siswa'     => new Siswa,
+            'mode' => 'create',
+            'action' => route('siswa.store'),
+            'siswa' => new Siswa,
             'kelasList' => $kelasList,
         ]);
     }
 
+
     public function store(Request $req)
     {
         $v = $req->validate([
-            'nis'                => 'required|unique:siswa,nis',
-            'nisn'               => 'nullable|unique:siswa,nisn',
-            'nama_depan'         => 'required|string|max:50',
-            'nama_belakang'      => 'required|string|max:50',
-            'foto'               => 'nullable|image|max:2048',
-            'email'              => 'required|email|unique:siswa,email',
-            'tanggal_lahir'      => 'nullable|date',
-            'jenis_kelamin'      => 'nullable|in:Laki-laki,Perempuan',
-            'alamat'             => 'nullable|string',
-            'wali_murid'         => 'nullable|string|max:100',
-            'kontak_wali_murid'  => 'nullable|string|max:20',
+            'nis' => 'required|unique:siswa,nis',
+            'nisn' => 'nullable|unique:siswa,nisn',
+            'nama_depan' => 'required|string|max:50',
+            'nama_belakang' => 'required|string|max:50',
+            'foto' => 'nullable|image|max:2048',
+            'email' => 'required|email|unique:siswa,email',
+            'tanggal_lahir' => 'nullable|date',
+            'jenis_kelamin' => 'nullable|in:Laki-laki,Perempuan',
+            'alamat' => 'nullable|string',
+            'wali_murid' => 'nullable|string|max:100',
+            'kontak_wali_murid' => 'nullable|string|max:20',
             'tanggal_awal_masuk' => 'nullable|date',
-            'status_siswa'       => 'required|in:aktif,nonaktif,lulus',
-            'status_awal_siswa'  => 'nullable|string',
+            'status_siswa' => 'required|in:aktif,nonaktif,lulus',
+            'status_awal_siswa' => 'nullable|string',
             'status_akhir_siswa' => 'nullable|string',
-            'kelas_id'           => 'required|exists:kelas,id',
+            'kelas_id' => 'required|exists:kelas,id',
         ]);
 
         if ($req->hasFile('foto')) {
-            $path = $req->file('foto')->store('foto_siswa','public');
+            $path = $req->file('foto')->store('foto_siswa', 'public');
             $v['foto'] = $path;
         }
 
         $birth = isset($v['tanggal_lahir']) ? Carbon::parse($v['tanggal_lahir'])->format('dmy') : '';
         $user = User::create([
-            'name' => $v['nama_depan'].' '.$v['nama_belakang'],
+            'name' => $v['nama_depan'] . ' ' . $v['nama_belakang'],
             'email' => $v['email'],
-            'password' => Hash::make($v['nama_belakang'].$birth),
+            'password' => Hash::make($v['nama_belakang'] . $birth),
         ]);
         $user->assignRole('siswa');
 
@@ -80,16 +81,16 @@ class SiswaController extends Controller
         Siswa::create($v);
 
         return redirect()->route('siswa.index')
-                         ->with('success','Siswa berhasil ditambahkan.');
+            ->with('success', 'Siswa berhasil ditambahkan.');
     }
 
     public function edit(Siswa $siswa)
     {
         $kelasList = Kelas::orderBy('nama')->get();
         return view('siswa.form', [
-            'mode'      => 'edit',
-            'action'    => route('siswa.update', $siswa),
-            'siswa'     => $siswa,
+            'mode' => 'edit',
+            'action' => route('siswa.update', $siswa),
+            'siswa' => $siswa,
             'kelasList' => $kelasList,
         ]);
     }
@@ -97,22 +98,22 @@ class SiswaController extends Controller
     public function update(Request $req, Siswa $siswa)
     {
         $v = $req->validate([
-            'nis'                => "required|unique:siswa,nis,{$siswa->id}",
-            'nisn'               => "nullable|unique:siswa,nisn,{$siswa->id}",
-            'nama_depan'         => 'required|string|max:50',
-            'nama_belakang'      => 'required|string|max:50',
-            'foto'               => 'nullable|image|max:2048',
-            'email'              => "required|email|unique:siswa,email,{$siswa->id}",
-            'tanggal_lahir'      => 'nullable|date',
-            'jenis_kelamin'      => 'nullable|in:Laki-laki,Perempuan',
-            'alamat'             => 'nullable|string',
-            'wali_murid'         => 'nullable|string|max:100',
-            'kontak_wali_murid'  => 'nullable|string|max:20',
+            'nis' => "required|unique:siswa,nis,{$siswa->id}",
+            'nisn' => "nullable|unique:siswa,nisn,{$siswa->id}",
+            'nama_depan' => 'required|string|max:50',
+            'nama_belakang' => 'required|string|max:50',
+            'foto' => 'nullable|image|max:2048',
+            'email' => "required|email|unique:siswa,email,{$siswa->id}",
+            'tanggal_lahir' => 'nullable|date',
+            'jenis_kelamin' => 'nullable|in:Laki-laki,Perempuan',
+            'alamat' => 'nullable|string',
+            'wali_murid' => 'nullable|string|max:100',
+            'kontak_wali_murid' => 'nullable|string|max:20',
             'tanggal_awal_masuk' => 'nullable|date',
-            'status_siswa'       => 'required|in:aktif,nonaktif,lulus',
-            'status_awal_siswa'  => 'nullable|string',
+            'status_siswa' => 'required|in:aktif,nonaktif,lulus',
+            'status_awal_siswa' => 'nullable|string',
             'status_akhir_siswa' => 'nullable|string',
-            'kelas_id'           => 'required|exists:kelas,id',
+            'kelas_id' => 'required|exists:kelas,id',
         ]);
 
         if ($req->hasFile('foto')) {
@@ -120,20 +121,20 @@ class SiswaController extends Controller
             if ($siswa->foto) {
                 Storage::disk('public')->delete($siswa->foto);
             }
-            $v['foto'] = $req->file('foto')->store('foto_siswa','public');
+            $v['foto'] = $req->file('foto')->store('foto_siswa', 'public');
         }
 
         $siswa->update($v);
 
         if ($siswa->user) {
             $siswa->user->update([
-                'name' => $v['nama_depan'].' '.$v['nama_belakang'],
+                'name' => $v['nama_depan'] . ' ' . $v['nama_belakang'],
                 'email' => $v['email'],
             ]);
         }
 
         return redirect()->route('siswa.index')
-                         ->with('success','Data siswa berhasil diperbarui.');
+            ->with('success', 'Data siswa berhasil diperbarui.');
     }
 
     public function destroy(Siswa $siswa)
@@ -142,14 +143,29 @@ class SiswaController extends Controller
             Storage::disk('public')->delete($siswa->foto);
         }
         $siswa->delete();
-        return back()->with('success','Siswa berhasil dihapus.');
+        return back()->with('success', 'Siswa berhasil dihapus.');
     }
 
     public function import(Request $req)
     {
-        $req->validate(['file'=>'required|mimes:xlsx,xls']);
+        $req->validate(['file' => 'required|mimes:xlsx,xls']);
         Excel::import(new SiswaImport, $req->file('file'));
         return redirect()->route('siswa.index')
-                         ->with('success','Data siswa berhasil diimpor.');
+            ->with('success', 'Data siswa berhasil diimpor.');
+    }
+
+    public function downloadTemplate()
+    {
+        $path = storage_path('app/template_import_siswa.csv');
+
+        if (!file_exists($path)) {
+            abort(404, 'Template tidak ditemukan.');
+        }
+
+        return response()->download(
+            $path,
+            'template_import_siswa.csv',
+            ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
+        );
     }
 }
