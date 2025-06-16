@@ -7,6 +7,8 @@ use App\Models\JurnalUmum;
 use App\Exports\JurnalUmumExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\JsonResponse;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class JurnalUmumController extends Controller
 {
@@ -52,8 +54,21 @@ class JurnalUmumController extends Controller
     public function exportPdf()
     {
         $entries = JurnalUmum::orderByDesc('tanggal')->get();
-        $pdf = Pdf::loadView('jurnal-umum.pdf', compact('entries'))
+        $qr = base64_encode(
+            QrCode::format('png')->size(150)->generate(route('api.jurnal-umum'))
+        );
+        $pdf = Pdf::loadView('jurnal-umum.pdf', compact('entries', 'qr'))
             ->setPaper('a4', 'landscape');
         return $pdf->download('jurnal-umum.pdf');
+    }
+
+    /**
+     * Public API returning JSON jurnal umum entries
+     */
+    public function apiData(): JsonResponse
+    {
+        return response()->json(
+            JurnalUmum::orderByDesc('tanggal')->get()
+        );
     }
 }
