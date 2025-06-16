@@ -16,6 +16,8 @@ use Carbon\Carbon;
 use App\Exports\LaporanExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\JsonResponse;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class LaporanController extends Controller
 {
@@ -81,14 +83,40 @@ class LaporanController extends Controller
 
         $data = $this->collectData($v['type'], $v['date_from'], $v['date_to']);
 
+        $apiUrl = route('api.laporan', [
+            'type' => $v['type'],
+            'date_from' => $v['date_from'],
+            'date_to' => $v['date_to'],
+        ]);
+        $qr = base64_encode(
+            QrCode::format('png')->size(150)->generate($apiUrl)
+        );
+
         $pdf = Pdf::loadView('laporan.pdf', [
             'type' => $v['type'],
             'from' => $v['date_from'],
             'to' => $v['date_to'],
             'data' => $data,
+            'qr' => $qr,
         ])->setPaper('a4', 'landscape');
 
         return $pdf->download("laporan-{$v['type']}_{$v['date_from']}_to_{$v['date_to']}.pdf");
+    }
+
+    /**
+     * Public API returning JSON laporan data
+     */
+    public function apiData(Request $request): JsonResponse
+    {
+        $v = $request->validate([
+            'type' => 'required',
+            'date_from' => 'required|date',
+            'date_to' => 'required|date',
+        ]);
+
+        return response()->json(
+            $this->collectData($v['type'], $v['date_from'], $v['date_to'])
+        );
     }
 
     // Render view result
