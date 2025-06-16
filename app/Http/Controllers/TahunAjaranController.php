@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TahunAjaran;
 use App\Models\Bulan;
+use App\Models\Kelas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
@@ -18,13 +19,25 @@ class TahunAjaranController extends Controller
         $this->middleware('permission:delete tahun_ajaran')->only('destroy');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $data = TahunAjaran::with('bulan')
-            ->orderBy('nama', 'desc')
-            ->paginate(10);
+        $activeTab = $request->get('tab', 'tahun-ajaran');
 
-        return view('tahun-ajaran.index', compact('data'));
+        $tahunData = TahunAjaran::with('bulan')
+            ->orderBy('nama', 'desc')
+            ->paginate(10, ['*'], 'ta_page')
+            ->withQueryString();
+
+        $kelasData = Kelas::with('tahunAjaran')
+            ->orderBy('nama')
+            ->paginate(10, ['*'], 'kelas_page')
+            ->withQueryString();
+
+        return view('akademik.index', [
+            'activeTab' => $activeTab,
+            'tahunData' => $tahunData,
+            'kelasData' => $kelasData,
+        ]);
     }
 
     public function create()
