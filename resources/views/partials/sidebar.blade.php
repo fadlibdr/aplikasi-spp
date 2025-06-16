@@ -122,6 +122,7 @@
                 <h6 class="collapse-header">Settings</h6>
                 <a class="collapse-item" href="{{ route('users.index') }}">User Management</a>
                 <a class="collapse-item" href="{{ route('settings.index') }}">Application Settings</a>
+                <a class="collapse-item" href="{{ route('audit.index') }}">Audit Logs</a>
             </div>
         </div>
     </li>
