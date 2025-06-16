@@ -19,11 +19,7 @@ class KelasController extends Controller
 
     public function index()
     {
-        $data = Kelas::with('tahunAjaran')
-                      ->orderBy('nama')
-                      ->paginate(10);
-
-        return view('kelas.index', compact('data'));
+        return redirect()->route('tahun-ajaran.index', ['tab' => 'kelas']);
     }
 
     public function create()
