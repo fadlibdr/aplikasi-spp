@@ -3,6 +3,9 @@
 namespace App\Imports;
 
 use App\Models\Siswa;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
@@ -10,6 +13,14 @@ class SiswaImport implements ToModel, WithHeadingRow
 {
     public function model(array $row)
     {
+        $birth = isset($row['tanggal_lahir']) ? Carbon::parse($row['tanggal_lahir'])->format('dmy') : '';
+        $user = User::create([
+            'name' => $row['nama_depan'].' '.$row['nama_belakang'],
+            'email' => $row['email'],
+            'password' => Hash::make(($row['nama_belakang'] ?? '').$birth),
+        ]);
+        $user->assignRole('siswa');
+
         return new Siswa([
             'nis'                => $row['nis'],
             'nisn'               => $row['nisn'] ?? null,
@@ -27,6 +38,7 @@ class SiswaImport implements ToModel, WithHeadingRow
             'status_awal_siswa'  => $row['status_awal_siswa'] ?? null,
             'status_akhir_siswa' => $row['status_akhir_siswa'] ?? null,
             'kelas_id'           => $row['kelas_id'],
+            'user_id'            => $user->id,
         ]);
     }
 }

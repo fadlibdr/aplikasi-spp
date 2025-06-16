@@ -27,6 +27,7 @@
                 @foreach ($iuran as $index => $tagihan)
                     <tr>
                         <td><input type="checkbox" class="iuran-checkbox" data-nominal="{{ $tagihan->jenisPembayaran->nominal }}" value="{{ $tagihan->id }}"></td>
+
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $tagihan->jenisPembayaran->nama }}</td>
                         <td>Rp {{ number_format($tagihan->jenisPembayaran->nominal, 0, ',', '.') }}</td>
@@ -81,6 +82,7 @@
                         window.snap.pay(res.token);
                     } else {
                         alert(res.error || 'Terjadi kesalahan');
+
                     }
                 });
             });
