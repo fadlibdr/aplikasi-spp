@@ -49,21 +49,13 @@
             <span>Profil Sekolah</span></a>
     </li>
 
-    <!-- Nav Item - Pages Collapse Menu -->
+    <!-- Nav Item - Dashboard -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
-            aria-controls="collapseTwo">
-            <i class="fas fa-fw fa-cog"></i>
-            <span>Manajemen Kelas</span>
-        </a>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Manajemen Kelas</h6>
-                <a class="collapse-item" href="{{ route('tahun-ajaran.index') }}">Tahun Ajaran</a>
-                <a class="collapse-item" href="{{ route('kelas.index') }}">Kelas</a>
-            </div>
-        </div>
+        <a class="nav-link" href="{{ route('tahun-ajaran.index') }}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Tahun Akademik</span></a>
     </li>
+
 
     <!-- Nav Item - Components Collapse Menu -->
     <li class="nav-item">
@@ -119,6 +111,22 @@
         </a>
         <div id="collapse" class="collapse" aria-labelledby="heading" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Laporan</h6>
+                <a class="collapse-item" href="{{ route('laporan.index') }}">Laporan</a>
+            </div>
+        </div>
+    </li>
+
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
+            aria-controls="collapseTwo">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>Settings</span>
+        </a>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Settings</h6>
                 <a class="collapse-item" href="{{ route('users.index') }}">User Management</a>
                 <a class="collapse-item" href="{{ route('settings.index') }}">Application Settings</a>
@@ -126,13 +134,6 @@
         </div>
     </li>
 
-
-    <li class="nav-item">
-        <a class="nav-link" href="{{ route('users.index') }}">
-            <i class="fas fa-users-cog"></i>
-            <span>User Management</span>
-        </a>
-    </li>
     @endrole
 
     <!-- Divider -->
