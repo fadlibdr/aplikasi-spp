@@ -20,14 +20,15 @@ class SiswaController extends Controller
         $this->middleware('auth');
         $this->middleware('permission:view siswa')->only('index');
         $this->middleware('permission:create siswa')->only(['create', 'store', 'import']);
-        $this->middleware('permission:edit siswa')->only(['edit', 'update']);
+        $this->middleware('permission:edit siswa')->only(['edit', 'update', 'naikKelas', 'pindahSekolah', 'lulus']);
         $this->middleware('permission:delete siswa')->only('destroy');
     }
 
     public function index()
     {
         $data = Siswa::with('kelas')->orderBy('nis')->paginate(15);
-        return view('siswa.index', compact('data'));
+        $kelasList = Kelas::orderBy('nama')->get();
+        return view('siswa.index', compact('data', 'kelasList'));
     }
 
     public function create()
@@ -167,5 +168,36 @@ class SiswaController extends Controller
             'template_import_siswa.csv',
             ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
         );
+    }
+
+    public function naikKelas(Request $req, Siswa $siswa)
+    {
+        $v = $req->validate([
+            'kelas_id' => 'required|exists:kelas,id',
+        ]);
+
+        $siswa->update(['kelas_id' => $v['kelas_id']]);
+
+        return back()->with('success', 'Siswa berhasil naik kelas.');
+    }
+
+    public function pindahSekolah(Siswa $siswa)
+    {
+        $siswa->update([
+            'status_siswa' => 'nonaktif',
+            'status_akhir_siswa' => 'pindah',
+        ]);
+
+        return back()->with('success', 'Status siswa diperbarui menjadi pindah.');
+    }
+
+    public function lulus(Siswa $siswa)
+    {
+        $siswa->update([
+            'status_siswa' => 'lulus',
+            'status_akhir_siswa' => 'lulus',
+        ]);
+
+        return back()->with('success', 'Status siswa diperbarui menjadi lulus.');
     }
 }
