@@ -18,6 +18,7 @@ use App\Http\Controllers\ProfilSekolahController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\StudentProfileController;
+use App\Http\Controllers\EventController;
 
 
 
