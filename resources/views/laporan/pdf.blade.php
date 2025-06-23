@@ -44,7 +44,7 @@
     </table>
     <div style="text-align:center;margin-top:20px">
         <img src="data:image/png;base64,{{ $qr }}" alt="QR Code">
-        <p>Scan untuk data JSON</p>
+        <p>Scan untuk memeriksa keakuratan data</p>
     </div>
 </body>
 

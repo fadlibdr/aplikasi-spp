@@ -89,7 +89,7 @@ class LaporanController extends Controller
             'date_to' => $v['date_to'],
         ]);
         $qr = base64_encode(
-            QrCode::format('png')->size(150)->generate($apiUrl)
+            QrCode::format('svg')->size(150)->generate($apiUrl)
         );
 
         $pdf = Pdf::loadView('laporan.pdf', [
