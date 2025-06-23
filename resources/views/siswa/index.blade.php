@@ -59,26 +59,10 @@
       </td>
       <td>
       <a href="{{ route('siswa.edit', $s) }}" class="btn btn-sm btn-warning">Edit</a>
-      <form action="{{ route('siswa.naik-kelas', $s) }}" method="POST" class="d-inline">
-        @csrf
-        <select name="kelas_id" class="form-control form-control-sm d-inline w-auto">
-          @foreach($kelasList as $k)
-            <option value="{{ $k->id }}" {{ $k->id == $s->kelas_id ? 'selected' : '' }}>{{ $k->nama }}</option>
-          @endforeach
-        </select>
-        <button class="btn btn-sm btn-info">Naik</button>
-      </form>
-      <form action="{{ route('siswa.pindah', $s) }}" method="POST" class="d-inline" onsubmit="return confirm('Pindahkan siswa ini?')">
-        @csrf
-        <button class="btn btn-sm btn-secondary">Pindah</button>
-      </form>
-      <form action="{{ route('siswa.lulus', $s) }}" method="POST" class="d-inline" onsubmit="return confirm('Luluskan siswa ini?')">
-        @csrf
-        <button class="btn btn-sm btn-success">Lulus</button>
-      </form>
-      <form action="{{ route('siswa.destroy', $s) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus siswa ini?')">
-        @csrf @method('DELETE')
-        <button class="btn btn-sm btn-danger">Hapus</button>
+      <form action="{{ route('siswa.destroy', $s) }}" method="POST" class="d-inline"
+      onsubmit="return confirm('Hapus siswa ini?')">
+      @csrf @method('DELETE')
+      <button class="btn btn-sm btn-danger">Hapus</button>
       </form>
       </td>
     </tr>
