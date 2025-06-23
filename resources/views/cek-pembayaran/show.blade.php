@@ -9,7 +9,7 @@
         <div class="alert alert-success">Tidak ada tagihan tertunda.</div>
     @else
         <div class="mb-3">
-            <strong>Total Tagihan:</strong> Rp {{ number_format($totalTagihan, 0, ',', '.') }}
+            <strong>Total Tagihan:</strong> Rp <span id="total-nominal">0</span>
         </div>
 
         <table class="table table-bordered">
@@ -26,7 +26,7 @@
             <tbody>
                 @foreach ($iuran as $index => $tagihan)
                     <tr>
-                        <td><input type="checkbox" class="iuran-checkbox" name="iuran_ids[]" value="{{ $tagihan->id }}"></td>
+                        <td><input type="checkbox" class="iuran-checkbox" data-nominal="{{ $tagihan->jenisPembayaran->nominal }}" value="{{ $tagihan->id }}"></td>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $tagihan->jenisPembayaran->nama }}</td>
                         <td>Rp {{ number_format($tagihan->jenisPembayaran->nominal, 0, ',', '.') }}</td>
@@ -40,27 +40,56 @@
         <button id="pay-button" class="btn btn-success">Bayar Terpilih</button>
         <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
         <script type="text/javascript">
+            const checkboxes = document.querySelectorAll('.iuran-checkbox');
+            const totalSpan = document.getElementById('total-nominal');
+            function updateTotal() {
+                let total = 0;
+                checkboxes.forEach(cb => {
+                    if (cb.checked) total += parseInt(cb.dataset.nominal);
+                });
+                totalSpan.textContent = total.toLocaleString('id-ID');
+            }
+
             document.getElementById('select-all').addEventListener('change', function () {
-                document.querySelectorAll('.iuran-checkbox').forEach(cb => cb.checked = this.checked);
+                checkboxes.forEach(cb => cb.checked = this.checked);
+                updateTotal();
             });
+            checkboxes.forEach(cb => cb.addEventListener('change', updateTotal));
+            updateTotal();
+
             document.getElementById('pay-button').addEventListener('click', function (e) {
                 e.preventDefault();
-                window.snap.pay('{{ $snapToken }}', {
-                    onSuccess: function(result){
-                        alert("Pembayaran berhasil.");
-                        console.log(result);
+                const ids = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+                if (ids.length === 0) {
+                    alert('Pilih tagihan terlebih dahulu.');
+                    return;
+                }
+
+                fetch("{{ route('cek-pembayaran.pay') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    onPending: function(result){
-                        alert("Menunggu pembayaran.");
-                        console.log(result);
-                    },
-                    onError: function(result){
-                        alert("Terjadi kesalahan.");
-                        console.log(result);
-                    },
-                    onClose: function(){
-                        alert("Pembayaran dibatalkan.");
-                    }
+                    body: JSON.stringify({iuran_ids: ids})
+                })
+                .then(res => res.json())
+                .then(data => {
+                    window.snap.pay(data.token, {
+                        onSuccess: function(result){
+                            alert('Pembayaran berhasil.');
+                            location.reload();
+                        },
+                        onPending: function(result){
+                            alert('Menunggu pembayaran.');
+                        },
+                        onError: function(result){
+                            alert('Terjadi kesalahan.');
+                        },
+                        onClose: function(){
+                            alert('Pembayaran dibatalkan.');
+                        }
+                    });
                 });
             });
         </script>

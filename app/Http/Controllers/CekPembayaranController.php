@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Siswa;
 use App\Models\Iuran;
+use App\Models\Pembayaran;
 use Illuminate\Support\Facades\Auth;
 use Midtrans\Snap;
 use Midtrans\Config as MidtransConfig;
@@ -40,6 +41,39 @@ class CekPembayaranController extends Controller
 
         $totalTagihan = $iuran->sum(fn($i) => $i->jenisPembayaran->nominal);
 
+        return view('cek-pembayaran.show', compact('siswa', 'iuran', 'totalTagihan'));
+    }
+
+    public function pay(Request $request)
+    {
+        $request->validate([
+            'iuran_ids' => 'required|array|min:1',
+            'iuran_ids.*' => 'exists:iuran,id',
+        ]);
+
+        $iurans = Iuran::with(['siswa', 'jenisPembayaran'])
+            ->whereIn('id', $request->iuran_ids)
+            ->where('status', 'pending')
+            ->get();
+
+        if ($iurans->isEmpty()) {
+            return response()->json(['message' => 'Tagihan tidak ditemukan'], 404);
+        }
+
+        $siswa = $iurans->first()->siswa;
+        $totalTagihan = $iurans->sum(fn($i) => $i->jenisPembayaran->nominal);
+        $idsString = $iurans->pluck('id')->implode(',');
+        $orderId = 'MULTI-' . $idsString . '-' . time();
+
+        // Simpan pembayaran pending
+        Pembayaran::create([
+            'iuran_id' => $iurans->first()->id,
+            'order_id' => $orderId,
+            'jumlah' => $totalTagihan,
+            'metode' => 'midtrans',
+            'status' => 'pending',
+        ]);
+
         // Konfigurasi Midtrans
         MidtransConfig::$serverKey = config('midtrans.server_key');
         MidtransConfig::$isProduction = config('midtrans.is_production');
@@ -48,7 +82,7 @@ class CekPembayaranController extends Controller
 
         $params = [
             'transaction_details' => [
-                'order_id' => 'ORDER-' . uniqid(),
+                'order_id' => $orderId,
                 'gross_amount' => $totalTagihan,
             ],
             'customer_details' => [
@@ -60,7 +94,7 @@ class CekPembayaranController extends Controller
 
         $snapToken = Snap::getSnapToken($params);
 
-        return view('cek-pembayaran.show', compact('siswa', 'iuran', 'totalTagihan', 'snapToken'));
+        return response()->json(['token' => $snapToken]);
     }
 
 }
