@@ -9,6 +9,8 @@ use App\Models\Pengeluaran;
 use App\Models\Pembayaran;
 use App\Exports\KeuanganExport;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\JsonResponse;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class KeuanganController extends Controller
 {
@@ -56,8 +58,22 @@ class KeuanganController extends Controller
     {
         $penerimaan = Penerimaan::with('pembayaran')->orderBy('tanggal', 'desc')->get();
         $pengeluaran = Pengeluaran::orderBy('tanggal', 'desc')->get();
-        $pdf = Pdf::loadView('keuangan.pdf', compact('penerimaan', 'pengeluaran'));
+        $qr = base64_encode(
+            QrCode::format('png')->size(150)->generate(route('api.keuangan'))
+        );
+        $pdf = Pdf::loadView('keuangan.pdf', compact('penerimaan', 'pengeluaran', 'qr'));
         return $pdf->download('laporan-keuangan.pdf');
+    }
+
+    /**
+     * Public API returning JSON keuangan data
+     */
+    public function apiData(): JsonResponse
+    {
+        return response()->json([
+            'penerimaan' => Penerimaan::with('pembayaran')->orderBy('tanggal', 'desc')->get(),
+            'pengeluaran' => Pengeluaran::orderBy('tanggal', 'desc')->get(),
+        ]);
     }
 
 
