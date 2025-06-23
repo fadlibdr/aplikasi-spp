@@ -49,7 +49,7 @@ class LaporanController extends Controller
     public function generate(Request $request)
     {
         $v = $request->validate([
-            'type' => 'required|in:' . implode(',', array_keys($this->indexTypes())),
+            'type' => 'required|in:' . implode(',', $this->indexTypes()),
             'date_from' => 'required|date',
             'date_to' => 'required|date|after_or_equal:date_from',
         ]);
