@@ -6,7 +6,10 @@
 
     <div class="card shadow-sm mb-4">
     <div class="card-body">
-      <h5 class="card-title">Profil</h5>
+      <h5 class="card-title d-flex justify-content-between align-items-center">
+        <span>Profil</span>
+        <a href="{{ route('student.profile.edit') }}" class="btn btn-sm btn-primary">Edit</a>
+      </h5>
       <p><strong>NIS:</strong> {{ $siswa->nis }}</p>
       <p><strong>Nama:</strong> {{ $siswa->nama_depan }} {{ $siswa->nama_belakang }}</p>
       <p><strong>Kelas:</strong> {{ $siswa->kelas->nama }}</p>

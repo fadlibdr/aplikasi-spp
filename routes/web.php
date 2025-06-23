@@ -17,6 +17,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ProfilSekolahController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\StudentProfileController;
 
 
 
@@ -112,6 +113,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::middleware(['auth', 'role:siswa'])->group(function () {
     Route::get('/dashboard-siswa', [DashboardController::class, 'student'])
         ->name('dashboard.student');
+    Route::get('/profil-siswa', [StudentProfileController::class, 'edit'])
+        ->name('student.profile.edit');
+    Route::put('/profil-siswa', [StudentProfileController::class, 'update'])
+        ->name('student.profile.update');
 });
 
 
