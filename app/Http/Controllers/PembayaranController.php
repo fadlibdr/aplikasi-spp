@@ -106,8 +106,28 @@ class PembayaranController extends Controller
         // 2) Temukan payment record
         $payment = Pembayaran::where('order_id', $notif['order_id'])->first();
         if (!$payment) {
-            // kalau mau, bisa buat baru, tapi
-            return abort(404, 'Order not found');
+            // Pesanan mungkin dibuat untuk banyak iuran tanpa record
+            $ids = [];
+            if (preg_match('/MULTI-([0-9,]+)-/', $notif['order_id'], $m)) {
+                $ids = explode(',', $m[1]);
+            }
+            if (empty($ids)) {
+                return abort(404, 'Order not found');
+            }
+
+            $payment = Pembayaran::create([
+                'iuran_id' => $ids[0],
+                'order_id' => $notif['order_id'],
+                'jumlah' => $notif['gross_amount'],
+                'metode' => 'midtrans',
+                'status' => $notif['transaction_status'],
+                'tgl_bayar' => now(),
+                'midtrans_id' => $notif['transaction_id'] ?? null,
+            ]);
+
+            Iuran::whereIn('id', $ids)->update(['status' => 'lunas']);
+
+            return response()->json(['message' => 'OK']);
         }
 
         // 3) Update payment
@@ -118,7 +138,13 @@ class PembayaranController extends Controller
         ]);
 
         // 4) Tandai iuran jadi lunas
-        $payment->iuran->update(['status' => 'lunas']);
+        $ids = [];
+        if (preg_match('/MULTI-([0-9,]+)-/', $payment->order_id, $m)) {
+            $ids = explode(',', $m[1]);
+        } else {
+            $ids = [$payment->iuran_id];
+        }
+        Iuran::whereIn('id', $ids)->update(['status' => 'lunas']);
 
         return response()->json(['message' => 'OK']);
     }

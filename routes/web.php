@@ -117,6 +117,7 @@ Route::middleware(['auth', 'role:siswa'])->group(function () {
 
 Route::get('/cek-pembayaran', [CekPembayaranController::class, 'index'])->name('cek-pembayaran.index');
 Route::post('/cek-pembayaran', [CekPembayaranController::class, 'show'])->name('cek-pembayaran.show');
+Route::post('/cek-pembayaran/pay', [CekPembayaranController::class, 'pay'])->name('cek-pembayaran.pay');
 
 
 Route::middleware(['auth'])->group(function () {
