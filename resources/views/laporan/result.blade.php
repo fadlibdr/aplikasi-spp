@@ -45,10 +45,10 @@
         <tbody>
           @foreach($data as $d)
           <tr>
-            <td>{{ $d->tgl_bayar }}</td>
-            <td>{{ $d->iuran->siswa->nama_depan }} {{ $d->iuran->siswa->nama_belakang }}</td>
-            <td>{{ $d->iuran->jenisPembayaran->nama }}</td>
-            <td>Rp {{ number_format($d->jumlah,0,',','.') }}</td>
+            <td>{{ $d['tgl_bayar'] }}</td>
+            <td>{{ $d['siswa'] }}</td>
+            <td>{{ $d['jenis'] }}</td>
+            <td>Rp {{ number_format($d['jumlah'],0,',','.') }}</td>
           </tr>
           @endforeach
         </tbody>
