@@ -97,4 +97,48 @@ class SiswaStatusTest extends TestCase
             'status_akhir_siswa' => 'lulus',
         ]);
     }
+
+    public function test_admin_can_bulk_update_status(): void
+    {
+        $siswa1 = Siswa::create([
+            'nis' => '111',
+            'nama_depan' => 'One',
+            'nama_belakang' => 'Student',
+            'email' => 'one@example.com',
+            'kelas_id' => $this->kelas1->id,
+        ]);
+        $siswa2 = Siswa::create([
+            'nis' => '112',
+            'nama_depan' => 'Two',
+            'nama_belakang' => 'Student',
+            'email' => 'two@example.com',
+            'kelas_id' => $this->kelas1->id,
+        ]);
+
+        $this->actingAs($this->admin)
+            ->post('/siswa/ref', [
+                'siswa_ids' => [$siswa1->id, $siswa2->id],
+                'kelas_id' => $this->kelas2->id,
+                'action' => 'naik',
+            ])
+            ->assertRedirect();
+        $this->assertDatabaseHas('siswa', ['id' => $siswa1->id, 'kelas_id' => $this->kelas2->id]);
+        $this->assertDatabaseHas('siswa', ['id' => $siswa2->id, 'kelas_id' => $this->kelas2->id]);
+
+        $this->actingAs($this->admin)
+            ->post('/siswa/ref', [
+                'siswa_ids' => [$siswa1->id, $siswa2->id],
+                'action' => 'pindah',
+            ])
+            ->assertRedirect();
+        $this->assertDatabaseHas('siswa', ['id' => $siswa1->id, 'status_akhir_siswa' => 'pindah']);
+
+        $this->actingAs($this->admin)
+            ->post('/siswa/ref', [
+                'siswa_ids' => [$siswa1->id, $siswa2->id],
+                'action' => 'lulus',
+            ])
+            ->assertRedirect();
+        $this->assertDatabaseHas('siswa', ['id' => $siswa2->id, 'status_siswa' => 'lulus']);
+    }
 }
