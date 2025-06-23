@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Siswa;
 use App\Models\Iuran;
 use App\Models\Pembayaran;
+use App\Models\TahunAjaran;
 
 class DashboardController extends Controller
 {
@@ -43,13 +44,30 @@ class DashboardController extends Controller
             ])
             ->get();
 
+        $activeYear = TahunAjaran::with('bulan')->where('aktif', true)->first();
+        $calendarEvents = [];
+        if ($activeYear) {
+            [$yearStart, $yearEnd] = array_map('intval', explode('/', $activeYear->nama));
+            foreach ($activeYear->bulan as $b) {
+                $year = $b->urutan >= 7 ? $yearStart : $yearEnd;
+                $date = sprintf('%04d-%02d-01', $year, $b->urutan);
+                $calendarEvents[] = [
+                    'title' => $b->nama,
+                    'start' => $date,
+                ];
+            }
+        }
+
+        $calendarEvents = json_encode($calendarEvents);
+
         return view('dashboard.admin', compact(
             'activeStudents',
             'paymentsThisMonth',
             'pendingStudents',
             'totalReceived',
             'totalPending',
-            'studentPayments'
+            'studentPayments',
+            'calendarEvents'
         ));
     }
 

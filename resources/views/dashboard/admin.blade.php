@@ -31,24 +31,32 @@
     </div>
     </div>
 
-    <div class="col-xl-4 col-lg-5">
-    <div class="card shadow mb-4">
-      <!-- Card Header - Dropdown -->
-      <div class="card-header py-3">
-      <h6 class="m-0 font-weight-bold text-primary">Rekapitulasi Pembayaran</h6>
+    <div class="row mt-4">
+      <div class="col-xl-6 col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Rekapitulasi Pembayaran</h6>
+          </div>
+          <div class="card-body">
+            <div class="chart-pie pt-4">
+              <canvas id="paymentChart"></canvas>
+            </div>
+            <hr>
+            Total terbayar: {{ $totalReceived }} <br>
+            Total pending: {{  $totalPending }}
+          </div>
+        </div>
       </div>
-      <!-- Card Body -->
-      <div class="card-body">
-      <div class="chart-pie pt-4">
-        <canvas id="paymentChart"></canvas>
+      <div class="col-xl-6 col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Kalender Akademik</h6>
+          </div>
+          <div class="card-body">
+            <div id="academicCalendar"></div>
+          </div>
+        </div>
       </div>
-      <hr>
-      Total terbayar: {{ $totalReceived }} <br>
-      Total pending: {{  $totalPending }}
-      {{-- Styling for the donut chart can be found in the
-      <code>/js/demo/chart-pie-demo.js</code> file. --}}
-      </div>
-    </div>
     </div>
 
     <div class="card shadow-sm mt-4">
@@ -81,8 +89,13 @@
   </div>
 @endsection
 
-@push('scripts')
+  @push('styles')
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css">
+  @endpush
+
+  @push('scripts')
   <script src="{{ asset('vendor/sb-admin-2/vendor/chart.js/Chart.min.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
     new Chart(document.getElementById('paymentChart'), {
@@ -101,6 +114,13 @@
       plugins: { legend: { position: 'bottom' } }
       }
     });
+
+    const cal = new FullCalendar.Calendar(document.getElementById('academicCalendar'), {
+      initialView: 'dayGridMonth',
+      height: 350,
+      events: {!! $calendarEvents !!}
+    });
+    cal.render();
     });
   </script>
-@endpush
+  @endpush
