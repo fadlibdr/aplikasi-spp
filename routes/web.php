@@ -51,6 +51,10 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
 });
 
 Route::group(['middleware' => ['auth', 'role:admin']], function () {
+    Route::resource('events', EventController::class);
+});
+
+Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::resource('siswa', SiswaController::class)->except(['show']);
     Route::post('siswa/import', [SiswaController::class, 'import'])->name('siswa.import');
     Route::get('siswa/template', [SiswaController::class, 'downloadTemplate'])->name('siswa.template');

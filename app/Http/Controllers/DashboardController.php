@@ -8,6 +8,7 @@ use App\Models\Siswa;
 use App\Models\Iuran;
 use App\Models\Pembayaran;
 use App\Models\TahunAjaran;
+use App\Models\Event;
 
 class DashboardController extends Controller
 {
@@ -56,6 +57,14 @@ class DashboardController extends Controller
                     'start' => $date,
                 ];
             }
+        }
+
+        foreach (Event::orderBy('start_date')->get() as $ev) {
+            $calendarEvents[] = [
+                'title' => $ev->title,
+                'start' => $ev->start_date->toDateString(),
+                'end'   => $ev->end_date?->toDateString(),
+            ];
         }
 
         $calendarEvents = json_encode($calendarEvents);
