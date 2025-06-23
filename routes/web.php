@@ -16,6 +16,7 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ProfilSekolahController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuditLogController;
 
 
 
