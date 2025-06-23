@@ -56,6 +56,12 @@
             <span>Tahun Akademik</span></a>
     </li>
 
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('events.index') }}">
+            <i class="fas fa-fw fa-calendar"></i>
+            <span>Event</span></a>
+    </li>
+
 
     <!-- Nav Item - Components Collapse Menu -->
     <li class="nav-item">

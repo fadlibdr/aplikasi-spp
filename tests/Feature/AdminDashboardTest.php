@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\TahunAjaran;
 use App\Models\Kelas;
 use App\Models\Siswa;
+use App\Models\Event;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\PermissionMiddleware;
@@ -60,6 +61,19 @@ class AdminDashboardTest extends TestCase
         $response->assertStatus(200)
                  ->assertSee('id="paymentChart"', false)
                  ->assertSee('Status Pembayaran Siswa');
+    }
+
+    public function test_calendar_contains_events(): void
+    {
+        Event::create([
+            'title' => 'Ujian Akhir',
+            'start_date' => '2025-07-01',
+        ]);
+
+        $response = $this->actingAs($this->admin)->get('/dashboard');
+
+        $response->assertStatus(200)
+                 ->assertSee('Ujian Akhir');
     }
 }
 
