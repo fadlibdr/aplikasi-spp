@@ -18,16 +18,17 @@ class SiswaController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view siswa')->only('index');
+        $this->middleware('permission:view siswa')->only(['index', 'ref']);
         $this->middleware('permission:create siswa')->only(['create', 'store', 'import']);
-        $this->middleware('permission:edit siswa')->only(['edit', 'update']);
+        $this->middleware('permission:edit siswa')->only(['edit', 'update', 'naikKelas', 'pindahSekolah', 'lulus', 'applyRef']);
         $this->middleware('permission:delete siswa')->only('destroy');
     }
 
     public function index()
     {
         $data = Siswa::with('kelas')->orderBy('nis')->paginate(15);
-        return view('siswa.index', compact('data'));
+        $kelasList = Kelas::orderBy('nama')->get();
+        return view('siswa.index', compact('data', 'kelasList'));
     }
 
     public function create()
@@ -167,5 +168,81 @@ class SiswaController extends Controller
             'template_import_siswa.csv',
             ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
         );
+    }
+
+    public function ref(Request $req)
+    {
+        $kelasList = Kelas::orderBy('nama')->get();
+        $selectedKelas = $req->query('kelas');
+        $query = Siswa::with('kelas')->orderBy('nis');
+        if ($selectedKelas) {
+            $query->where('kelas_id', $selectedKelas);
+        }
+        $siswaList = $query->paginate(20);
+
+        return view('siswa.ref', compact('kelasList', 'siswaList', 'selectedKelas'));
+    }
+
+    public function applyRef(Request $req)
+    {
+        $v = $req->validate([
+            'siswa_ids' => 'required|array',
+            'siswa_ids.*' => 'exists:siswa,id',
+            'action' => 'required|in:naik,pindah,lulus',
+            'kelas_id' => 'required_if:action,naik|exists:kelas,id',
+        ]);
+
+        $ids = $v['siswa_ids'];
+
+        switch ($v['action']) {
+            case 'naik':
+                Siswa::whereIn('id', $ids)->update(['kelas_id' => $v['kelas_id']]);
+                break;
+            case 'pindah':
+                Siswa::whereIn('id', $ids)->update([
+                    'status_siswa' => 'nonaktif',
+                    'status_akhir_siswa' => 'pindah',
+                ]);
+                break;
+            case 'lulus':
+                Siswa::whereIn('id', $ids)->update([
+                    'status_siswa' => 'lulus',
+                    'status_akhir_siswa' => 'lulus',
+                ]);
+                break;
+        }
+
+        return back()->with('success', 'Status siswa berhasil diperbarui.');
+    }
+
+    public function naikKelas(Request $req, Siswa $siswa)
+    {
+        $v = $req->validate([
+            'kelas_id' => 'required|exists:kelas,id',
+        ]);
+
+        $siswa->update(['kelas_id' => $v['kelas_id']]);
+
+        return back()->with('success', 'Siswa berhasil naik kelas.');
+    }
+
+    public function pindahSekolah(Siswa $siswa)
+    {
+        $siswa->update([
+            'status_siswa' => 'nonaktif',
+            'status_akhir_siswa' => 'pindah',
+        ]);
+
+        return back()->with('success', 'Status siswa diperbarui menjadi pindah.');
+    }
+
+    public function lulus(Siswa $siswa)
+    {
+        $siswa->update([
+            'status_siswa' => 'lulus',
+            'status_akhir_siswa' => 'lulus',
+        ]);
+
+        return back()->with('success', 'Status siswa diperbarui menjadi lulus.');
     }
 }
