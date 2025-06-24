@@ -59,6 +59,11 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::resource('siswa', SiswaController::class)->except(['show']);
     Route::post('siswa/import', [SiswaController::class, 'import'])->name('siswa.import');
     Route::get('siswa/template', [SiswaController::class, 'downloadTemplate'])->name('siswa.template');
+    Route::get('siswa/ref', [SiswaController::class, 'ref'])->name('siswa.ref');
+    Route::post('siswa/ref', [SiswaController::class, 'applyRef'])->name('siswa.ref.apply');
+    Route::post('siswa/{siswa}/naik-kelas', [SiswaController::class, 'naikKelas'])->name('siswa.naik-kelas');
+    Route::post('siswa/{siswa}/pindah', [SiswaController::class, 'pindahSekolah'])->name('siswa.pindah');
+    Route::post('siswa/{siswa}/lulus', [SiswaController::class, 'lulus'])->name('siswa.lulus');
 });
 
 
