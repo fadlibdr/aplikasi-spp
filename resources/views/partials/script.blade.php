@@ -12,6 +12,24 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const tables = document.querySelectorAll('table.table');
-            tables.forEach(t => $(t).DataTable());
+            tables.forEach(table => {
+                const dt = $(table).DataTable();
+
+                // Add a filter input for each column
+                const header = table.tHead;
+                if (!header) return;
+                const filterRow = header.insertRow(-1);
+                Array.from(header.rows[0].cells).forEach((th, idx) => {
+                    const cell = filterRow.insertCell(idx);
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.classList.add('form-control', 'form-control-sm');
+                    input.placeholder = 'Filter';
+                    input.addEventListener('keyup', () => {
+                        dt.column(idx).search(input.value).draw();
+                    });
+                    cell.appendChild(input);
+                });
+            });
         });
     </script>
